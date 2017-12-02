@@ -23,6 +23,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
     public float JumpSpeed = 10f; // Strength of the jump impulse
     public float JumpPreGroundingGraceTime = 0f; // Time before landing that jump inputs will be remembered and applied at the moment of landing
     public float JumpPostGroundingGraceTime = 0f; // Time after getting un-grounded that jumping will still be allowed
+    public float JumpPostWallGraceTime = 0f;
 
     [Header("Misc")]
     public bool OrientTowardsGravity = true; // Should the character align its up direction with the gravity (used for the planet example)
@@ -47,6 +48,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
     private Vector3 _jumpDirection = Vector3.up;
     private float _timeSinceJumpRequested = Mathf.Infinity;
     private float _timeSinceLastAbleToJump = 0f;
+    private float _timeSinceWallTouch = 0f;
     private bool _isTryingToUncrouch = false;
 
     private Animator animator;
@@ -69,7 +71,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
 
     public override void BeforeCharacterUpdate(float deltaTime)
     {
-        _canWallJump = false;
+    
     }
 
     public override bool MustUpdateGrounding()
@@ -130,6 +132,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
         // Handle jumping
         _jumpedThisFrame = false;
         _timeSinceJumpRequested += deltaTime;
+        _timeSinceWallTouch += deltaTime;
         if (_jumpRequested)
         {
             // Handle double jump
@@ -138,15 +141,12 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
                 if (_jumpConsumed && !_doubleJumpConsumed && (AllowJumpingWhenSliding ? !KinematicCharacterMotor.FoundAnyGround : !KinematicCharacterMotor.IsStableOnGround) && !_canWallJump)
                 {
                     KinematicCharacterMotor.ForceUnground();
-                    Debug.Log("Double jumping");
 
                     // Add to the return velocity and reset jump state
                     currentVelocity += (KinematicCharacterMotor.CharacterUp * JumpSpeed) - Vector3.Project(currentVelocity, KinematicCharacterMotor.CharacterUp);
                     _jumpRequested = false;
-                    Debug.Log("Jump request handled (double)");
 
                     _doubleJumpConsumed = true;
-                    Debug.Log("Can't doublejump again");
                     _jumpedThisFrame = true;
                 }
             }
@@ -159,17 +159,16 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
                 Vector3 jumpDirection = KinematicCharacterMotor.CharacterUp;
                 if (_canWallJump)
                 {   
-                    Debug.Log("Jumping off of wall");
                     jumpDirection += _wallJumpNormal;
                     jumpDirection = jumpDirection.normalized;
                     _canWallJump = false;
-                    Debug.Log("Can't walljump again");
+                    //animator.SetBool("canWallJump", false);
+                    _doubleJumpConsumed = false;
 
                 }
                 else if (KinematicCharacterMotor.FoundAnyGround && !KinematicCharacterMotor.IsStableOnGround)
                 {
                     jumpDirection = KinematicCharacterMotor.GroundNormal;
-                    Debug.Log("Jumping off of ground");
                 }
 
                 // Makes the character skip ground probing/snapping on its next update. 
@@ -179,9 +178,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
                 // Add to the return velocity and reset jump state
                 currentVelocity += (jumpDirection * JumpSpeed) - Vector3.Project(currentVelocity, KinematicCharacterMotor.CharacterUp);
                 _jumpRequested = false;
-                Debug.Log("Jump request handled (wall or ground)");
                 _jumpConsumed = true;
-                Debug.Log("Can't regular jump again");
                 _jumpedThisFrame = true;
             }
         }
@@ -196,6 +193,13 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
 
     public override void AfterCharacterUpdate(float deltaTime)
     {
+        if (_canWallJump && _timeSinceWallTouch >= JumpPostWallGraceTime) {
+            _canWallJump = false;
+            //animator.SetBool("canWallJump", false);
+        } else {
+            _timeSinceWallTouch += deltaTime;
+        }
+        
         // Handle jump-related values
         {
             // Handle jumping pre-ground grace period
@@ -209,7 +213,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
                 // If we're on a ground surface, reset jumping values
                 if (!_jumpedThisFrame)
                 {
-                    Debug.Log("Resetting jump on ground");
+                    Debug.Log("Ground jump reset");
                     _doubleJumpConsumed = false;
                     _jumpConsumed = false;
                 }
@@ -295,12 +299,17 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
 
     public override void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, bool isStableOnHit)
     {
+        // Obstruction must be (close to) pointed upwards to be valid (elimates overhangs)
+
+        bool jumpableAngle = (Vector3.Dot(hitNormal,KinematicCharacterMotor.CharacterUp) >= -0.1f) ? true : false;
+        Debug.Log(Vector3.Dot(hitNormal,KinematicCharacterMotor.CharacterUp));
         // We can wall jump only if we are not stable on ground and are moving against an obstruction
-        if (AllowWallJump && !KinematicCharacterMotor.IsStableOnGround && !isStableOnHit && !_canWallJump)
+        if (AllowWallJump && !KinematicCharacterMotor.IsStableOnGround && !isStableOnHit && !_canWallJump && jumpableAngle)
         {   
-            Debug.Log("Wall allows walljump and resets doublejump");
+            Debug.Log("Wall jump reset");
             _canWallJump = true;
-            _doubleJumpConsumed = false;
+            animator.SetBool("canWallJump", true);
+            _timeSinceWallTouch = 0f;
             _wallJumpNormal = hitNormal;
         }
     }
@@ -314,6 +323,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
     {
         _timeSinceJumpRequested = 0f;
         _jumpRequested = true;
+        Debug.Log("Jump requested");
     }
 
     public void Crouch(bool crouch)
@@ -355,6 +365,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
     protected void OnLeaveStableGround()
     {
         isGrounded = false;
+        _jumpConsumed = true;
     }
 
     void SetAnimationValues()
