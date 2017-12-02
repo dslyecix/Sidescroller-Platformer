@@ -296,7 +296,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
     public override void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, bool isStableOnHit)
     {
         // We can wall jump only if we are not stable on ground and are moving against an obstruction
-        if (AllowWallJump && !KinematicCharacterMotor.IsStableOnGround && !isStableOnHit)
+        if (AllowWallJump && !KinematicCharacterMotor.IsStableOnGround && !isStableOnHit && !_canWallJump)
         {   
             Debug.Log("Wall allows walljump and resets doublejump");
             _canWallJump = true;
