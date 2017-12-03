@@ -7,7 +7,7 @@ using System;
 public class PlayerInput : MonoBehaviour
 {
 
-    public PlayerCharacterController Character;
+    public PlayerCharacterController character;
     public float MouseSensitivity = 0.02f;
     public float attackCooldown = 5;
     public Collider[] IgnoredColliders;
@@ -26,7 +26,7 @@ public class PlayerInput : MonoBehaviour
         //Cursor.lockState = CursorLockMode.Locked;
         attackCooldownTimer = attackCooldown;
         canAttack = true;
-        Character.IgnoredColliders = IgnoredColliders;
+        character.IgnoredColliders = IgnoredColliders;
 
         camera = FindObjectOfType<Cinemachine.CinemachineVirtualCamera>();
     }
@@ -54,18 +54,18 @@ public class PlayerInput : MonoBehaviour
             //_lookInputVector = Vector3.zero;
         }
 
-        if (Character)
+        if (character)
         {
             // Apply move input to character
             Vector3 worldSpaceInput = Quaternion.LookRotation(Vector3.forward,Vector3.up) * _moveInputVector;
             Vector3 lookDirection = new Vector3(worldSpaceInput.x, 0, 0);
-            Character.Walk(isWalking);
-            Character.SetInputs(worldSpaceInput, lookDirection);
+            character.Walk(isWalking);
+            character.SetInputs(worldSpaceInput, lookDirection);
 
             // Jump input
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                Character.Jump();
+                character.Jump();
             }
 
             if (!canAttack) {
@@ -73,11 +73,17 @@ public class PlayerInput : MonoBehaviour
                 if (attackCooldownTimer <=0f) canAttack = true;
             } 
 
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                character.DoAFlip();
+            }
+
+
             //Attack input?
             if (Input.GetKeyDown(KeyCode.F))
             {
                 if (canAttack) {
-                    Character.Attack();
+                    character.Attack();
                     attackCooldownTimer = attackCooldown;
                     canAttack = false;
                 } 
@@ -89,11 +95,11 @@ public class PlayerInput : MonoBehaviour
             // Croucing input
             if (Input.GetKeyDown(KeyCode.C))
             {
-                Character.Crouch(true);
+                character.Crouch(true);
             }
             else if (Input.GetKeyUp(KeyCode.C))
             {
-                Character.Crouch(false);
+                character.Crouch(false);
             }
 
             // Apply input to camera

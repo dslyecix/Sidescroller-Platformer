@@ -55,6 +55,7 @@ ModelImporter:
     7400012: Walk01
     7400014: Wallgrab
     7400016: Walk
+    7400018: Flip
     9500000: //RootNode
     13700000: Body
   materials:
@@ -73,7 +74,13 @@ ModelImporter:
     animationImportWarnings: "\nClip 'Default Take' has import animation warnings
       that might lower retargeting quality:\nNote: Activate translation DOF on avatar
       to improve retargeting quality.\n\t'LowerLeg_L' has scale animation that will
-      be discarded.\n\t'LowerLeg_R' has scale animation that will be discarded.\n\nClip
+      be discarded.\n\t'Foot_L' has scale animation that will be discarded.\n\t'LowerLeg_R'
+      has scale animation that will be discarded.\n\t'Foot_R' has scale animation
+      that will be discarded.\n\nClip 'Flip' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'LowerLeg_L' has scale animation that will be discarded.\n\t'Foot_L'
+      has scale animation that will be discarded.\n\t'LowerLeg_R' has scale animation
+      that will be discarded.\n\t'Foot_R' has scale animation that will be discarded.\n\nClip
       'Run' has import animation warnings that might lower retargeting quality:\nNote:
       Activate translation DOF on avatar to improve retargeting quality.\n\t'LowerLeg_L'
       has scale animation that will be discarded.\n\t'Foot_L' has scale animation
@@ -265,6 +272,34 @@ ModelImporter:
       takeName: Wallgrab
       firstFrame: 0
       lastFrame: 1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Flip
+      takeName: Flip
+      firstFrame: -1
+      lastFrame: 26
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

@@ -145,7 +145,8 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
                     // Add to the return velocity and reset jump state
                     currentVelocity += (KinematicCharacterMotor.CharacterUp * JumpSpeed) - Vector3.Project(currentVelocity, KinematicCharacterMotor.CharacterUp);
                     _jumpRequested = false;
-
+                    animator.SetTrigger("jumped");
+                    
                     _doubleJumpConsumed = true;
                     _jumpedThisFrame = true;
                 }
@@ -162,7 +163,8 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
                     jumpDirection += _wallJumpNormal;
                     jumpDirection = jumpDirection.normalized;
                     _canWallJump = false;
-                    //animator.SetBool("canWallJump", false);
+                    animator.SetTrigger("jumped");
+                    animator.SetBool("canWallJump", false);
                     _doubleJumpConsumed = false;
 
                 }
@@ -177,6 +179,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
 
                 // Add to the return velocity and reset jump state
                 currentVelocity += (jumpDirection * JumpSpeed) - Vector3.Project(currentVelocity, KinematicCharacterMotor.CharacterUp);
+                animator.SetTrigger("jumped");
                 _jumpRequested = false;
                 _jumpConsumed = true;
                 _jumpedThisFrame = true;
@@ -195,7 +198,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
     {
         if (_canWallJump && _timeSinceWallTouch >= JumpPostWallGraceTime) {
             _canWallJump = false;
-            //animator.SetBool("canWallJump", false);
+            animator.SetBool("canWallJump", false);
         } else {
             _timeSinceWallTouch += deltaTime;
         }
@@ -366,6 +369,14 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
     {
         isGrounded = false;
         _jumpConsumed = true;
+    }
+
+    public void DoAFlip () 
+    {
+        if (!KinematicCharacterMotor.IsStableOnGround) 
+        {
+            animator.SetTrigger("flip");
+        }    
     }
 
     void SetAnimationValues()
