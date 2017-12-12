@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 945fcf6a3b989fb4c8a4f441b82fd186
-timeCreated: 1512341071
+guid: c0f2873adbca903478a7699abe38f6c5
+timeCreated: 1513092376
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Plane
+    4300000: Cube_008
     6400000: //RootNode
     7400000: Default Take
     9500000: //RootNode
@@ -42,7 +42,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
