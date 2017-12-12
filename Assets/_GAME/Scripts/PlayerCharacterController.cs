@@ -54,9 +54,12 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
     private Animator animator;
     private bool isGrounded;
 
+    private PlayerInput player;
+
     void Start () 
     {
         animator = GetComponentInChildren<Animator>();
+        player = GetComponent<PlayerInput>();
     }
 
 
@@ -165,7 +168,10 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
                     _canWallJump = false;
                     animator.SetTrigger("jumped");
                     animator.SetBool("canWallJump", false);
+                    if (_doubleJumpConsumed) player.PlayParticles(player.jumpParticles);
                     _doubleJumpConsumed = false;
+                    
+                    
 
                 }
                 else if (KinematicCharacterMotor.FoundAnyGround && !KinematicCharacterMotor.IsStableOnGround)
@@ -217,6 +223,7 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
                 if (!_jumpedThisFrame)
                 {
                     Debug.Log("Ground jump reset");
+                    if (_doubleJumpConsumed) player.PlayParticles(player.jumpParticles);
                     _doubleJumpConsumed = false;
                     _jumpConsumed = false;
                 }
@@ -361,8 +368,8 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
     protected void OnLanded()
     {
         isGrounded = true;
+        //if (_doubleJumpConsumed) player.PlayParticles(player.jumpParticles);
         _doubleJumpConsumed = false;
-
     }
 
     protected void OnLeaveStableGround()

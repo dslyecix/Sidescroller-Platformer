@@ -12,6 +12,8 @@ public class PlayerInput : MonoBehaviour
     public float attackCooldown = 5;
     public Collider[] IgnoredColliders;
 
+    public ParticleSystem jumpParticles;
+
     private Vector3 _moveInputVector = Vector3.zero;
     private Vector3 _lookInputVector = Vector3.zero;
 
@@ -23,7 +25,7 @@ public class PlayerInput : MonoBehaviour
 
     private void Start()
     {
-        //Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked;
         attackCooldownTimer = attackCooldown;
         canAttack = true;
         character.IgnoredColliders = IgnoredColliders;
@@ -36,7 +38,7 @@ public class PlayerInput : MonoBehaviour
        
         if (Input.GetMouseButtonDown(0))
         {
-            //Cursor.lockState = CursorLockMode.Locked;
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         // Gather input
@@ -57,10 +59,15 @@ public class PlayerInput : MonoBehaviour
         if (character)
         {
             // Apply move input to character
-            Vector3 worldSpaceInput = Quaternion.LookRotation(Vector3.forward,Vector3.up) * _moveInputVector;
-            Vector3 lookDirection = new Vector3(worldSpaceInput.x, 0, 0);
+            // Vector3 worldSpaceInput = Quaternion.LookRotation(Vector3.forward,Vector3.up) * _moveInputVector;
+            // Vector3 lookDirection = new Vector3(worldSpaceInput.x, 0, 0);
+            // character.Walk(isWalking);
+            // character.SetInputs(worldSpaceInput, lookDirection);
+
+            Vector3 localCameraRelativeInput = Quaternion.LookRotation(camera.transform.forward,Vector3.up) * _moveInputVector;
+            Vector3 lookDirection = localCameraRelativeInput;
             character.Walk(isWalking);
-            character.SetInputs(worldSpaceInput, lookDirection);
+            character.SetInputs(localCameraRelativeInput, lookDirection);
 
             // Jump input
             if (Input.GetKeyDown(KeyCode.Space))
@@ -108,5 +115,9 @@ public class PlayerInput : MonoBehaviour
             scrollInput = 0f;
             #endif
         }
+    }
+
+    public void PlayParticles(ParticleSystem _particleSystem) {
+        _particleSystem.Play(); 
     }
 }
