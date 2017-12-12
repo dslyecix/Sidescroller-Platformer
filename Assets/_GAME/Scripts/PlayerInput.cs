@@ -6,6 +6,7 @@ using System;
 
 public class PlayerInput : MonoBehaviour
 {
+    public Ability spell;
 
     public PlayerCharacterController character;
     public float MouseSensitivity = 0.02f;
@@ -96,7 +97,11 @@ public class PlayerInput : MonoBehaviour
                 } 
             }
 
-
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                Debug.Log("P pressed");
+                spell.CastAbility();
+            }
 
 
             // Croucing input

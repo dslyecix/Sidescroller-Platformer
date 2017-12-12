@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class KnockbackEffect : IAbilityBehaviour
+[CreateAssetMenu]
+public class KnockbackEffect : AbilityBehaviour
 {
-    public void Run(List<IAbilityTarget> targets, Transform _caster)
+    public override void Run(List<AbilityTarget> targets)
     {
-        Debug.Log(_caster.name + "'s Knockback Effect activated!");    
+        Debug.Log("Running behaviour");
+        foreach (AbilityTarget target in targets)
+        {
+            PlayerCharacterController character = target.abilityTarget.GetComponent<PlayerCharacterController>();
+            
+            character.AddVelocity(Random.onUnitSphere * 20f);
+        }  
     }
 }

@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IAbilityTarget
+
+public abstract class AbilityTarget : ScriptableObject
 {
 	// Interface for classes that represent the initial place for an ability
 	// to be activated towards.  Could be a transform,  Enemy class script, a location,
 	// a direction, etc.
+	public Transform abilityTarget;
 
-	void FetchTargets ();
+	public abstract void FetchTargets ();
 }

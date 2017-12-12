@@ -2,39 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu]
-public class Ability : ScriptableObject {
 
-	public Transform casterOfOrigin;
+public abstract class Ability : ScriptableObject {
 
-	public IAbilityTarget target;
-	public List<IAbilityBehaviour> behaviours = new List<IAbilityBehaviour>();
-	List<IAbilityTarget> behaviourTargets;
+	public abstract void CastAbility();
 
-	void CastAbility(Transform caster)
-	{
-		casterOfOrigin = caster;
+	public abstract void ResolveTargets();
 
-		ResolveTargets();
-
-		behaviourTargets.Add(target);
-		
-
-		ExecuteBehaviours();
-	}
-
-	void ResolveTargets() 
-	{
-		if (target != null) {
-			target.FetchTargets();
-		}
-	}
-
-	void ExecuteBehaviours() 
-	{
-		foreach (var behaviour in behaviours)
-		{
-			behaviour.Run(behaviourTargets, casterOfOrigin);
-		}
-	}
+	public abstract void ExecuteBehaviours();
 }
+

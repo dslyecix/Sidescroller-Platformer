@@ -312,11 +312,9 @@ public class PlayerCharacterController : KinematicCharacterController.BaseCharac
         // Obstruction must be (close to) pointed upwards to be valid (elimates overhangs)
 
         bool jumpableAngle = (Vector3.Dot(hitNormal,KinematicCharacterMotor.CharacterUp) >= -0.1f) ? true : false;
-        Debug.Log(Vector3.Dot(hitNormal,KinematicCharacterMotor.CharacterUp));
         // We can wall jump only if we are not stable on ground and are moving against an obstruction
         if (AllowWallJump && !KinematicCharacterMotor.IsStableOnGround && !isStableOnHit && !_canWallJump && jumpableAngle)
         {   
-            Debug.Log("Wall jump reset");
             _canWallJump = true;
             animator.SetBool("canWallJump", true);
             _timeSinceWallTouch = 0f;
